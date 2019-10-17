@@ -3,10 +3,11 @@ import React from 'react'
 import { TextField, Checkbox, Button, Select } from '@material-ui/core';
 
 
-class EditShowForm extends React.Component {
+class EditMediaForm extends React.Component {
 	constructor() {
 		super()
 		this.state = {
+			type: '',
 			title: '',
 			season: '',
 			service: '',
@@ -22,18 +23,19 @@ class EditShowForm extends React.Component {
 
 	componentDidMount() {
 		this.setState({
-			title: this.props.show.title,
-			season: this.props.show.season,
-			service: this.props.show.service,
-			length: this.props.show.length,
+			type: this.props.media.type,
+			title: this.props.media.title,
+			season: this.props.media.season,
+			service: this.props.media.service,
+			length: this.props.media.length,
 			tags: {
-				"animated": this.props.show.tags.animated,
-				"anime": this.props.show.tags.amime,
-				"comedy": this.props.show.tags.comedy,
-				"scary": this.props.show.tags.scary,
-				"action": this.props.show.tags.action
+				"animated": this.props.media.tags.animated,
+				"anime": this.props.media.tags.amime,
+				"comedy": this.props.media.tags.comedy,
+				"scary": this.props.media.tags.scary,
+				"action": this.props.media.tags.action
 			},
-			isWatching: this.props.show.isWatching
+			isWatching: this.props.media.isWatching
 		})
 
 	}
@@ -56,23 +58,23 @@ class EditShowForm extends React.Component {
 	}
 
 	onSubmit(event) {
-		let updateShow = {
+		let updatemedia = {
 			title: this.state.title,
 			season: this.state.season,
 			service: this.state.service,
 			length: this.state.length,
 			tags: this.state.tags,
-			rank: this.props.show.rank,
-			isWatching: this.props.show.isWatching
+			rank: this.props.media.rank,
+			isWatching: this.props.media.isWatching
 		}
 
-		fetch("http://localhost:3001/shows/update/" + this.props.show._id, {
+		fetch("http://localhost:3001/media/update/" + this.props.media._id, {
 			method: 'PUT',
 			headers: {
 		      'Accept': 'application/json',
 		      'Content-Type': 'application/json'
 		    },
-			body: JSON.stringify(updateShow),
+			body: JSON.stringify(updatemedia),
 		});
 
 		this.props.onFormSubmit()
@@ -167,4 +169,4 @@ class EditShowForm extends React.Component {
 	}
 }
 
-export default EditShowForm
+export default EditMediaForm

@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-let Show = new Schema({
+let Media = new Schema({
+  type: String,
   title: String,
   season: String,
   service: String,
@@ -11,4 +12,4 @@ let Show = new Schema({
   isWatching: Boolean
 });
 
-module.exports = mongoose.model('Show', Show);
+module.exports = mongoose.model('Media', Media);

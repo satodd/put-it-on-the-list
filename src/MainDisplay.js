@@ -2,36 +2,36 @@ import React from 'react'
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
-import NewShowForm from './NewShowForm'
-import EditShowForm from './EditShowForm'
-import ShowList from './ShowList'
+import NewMediaForm from './NewMediaForm'
+import EditMediaForm from './EditMediaForm'
+import MediaList from './MediaList'
 
 class MainDisplay extends React.Component {
 	constructor() {
 		super()
 		this.state = {
 			loading: false,
-			showList: [],
-			filterShows: '',
-			displayNewShowForm: false,
-			displayEditShowForm: false,
-			editingShow: []
+			mediaList: [],
+			filterMedia: '',
+			displayNewMediaForm: false,
+			displayEditMediaForm: false,
+			editingMedia: []
 		}
 
-		this.setDisplayNewShowForm = this.setDisplayNewShowForm.bind(this)
-		this.setDisplayEditShowForm = this.setDisplayEditShowForm.bind(this)
+		this.setDisplayNewMediaForm = this.setDisplayNewMediaForm.bind(this)
+		this.setDisplayEditMediaForm = this.setDisplayEditMediaForm.bind(this)
 		this.updateCurrentlyWatching = this.updateCurrentlyWatching.bind(this)
 		this.returnToMain = this.returnToMain.bind(this)
 		this.changeRanking = this.changeRanking.bind(this)
-		this.getShowList = this.getShowList.bind(this)
+		this.getMediaList = this.getMediaList.bind(this)
 		this.handleChange = this.handleChange.bind(this)
 	}
 
-	getShowList() {
-		let url = "http://localhost:3001/shows"
+	getMediaList() {
+		let url = "http://localhost:3001/media"
 
-		if (this.state.filterShows) {
-			url = url + "?search=" + this.state.filterShows.toLowerCase()
+		if (this.state.filterMedia) {
+			url = url + "?search=" + this.state.filterMedia.toLowerCase()
 		}
 			
 		fetch(url)
@@ -42,99 +42,99 @@ class MainDisplay extends React.Component {
 				this.setState((prevState) => ({
 					...prevState,
 					loading: false,
-					showList: data
+					mediaList: data
 				}))
 			})
 			.catch(error => {
 				this.setState({
 					loading: false
 				})
-				console.log("error getting shows!", error)
+				console.log("error getting media!", error)
 			})
 	}
 
-	setDisplayNewShowForm() {
+	setDisplayNewMediaForm() {
 		this.setState((prevState) => ({
-			displayNewShowForm: !(prevState.displayNewShowForm)
+			displayNewMediaForm: !(prevState.displayNewMediaForm)
 		}))
 
 		setTimeout(() => { 
-			this.getShowList(); 
+			this.getMediaList(); 
 		}, 100);
 	}
 
-	setDisplayEditShowForm(show = {}) {
+	setDisplayEditMediaForm(media = {}) {
 		this.setState((prevState) => ({
 			...prevState,
-			displayEditShowForm: !prevState.displayEditShowForm,
-			editingShow: show
+			displayEditMediaForm: !prevState.displayEditMediaForm,
+			editingMedia: media
 		}))
 
 		setTimeout(() => { 
-			this.getShowList(); 
+			this.getMediaList(); 
 		}, 100);
 	}
 
-	updateCurrentlyWatching(show) {
+	updateCurrentlyWatching(media) {
 		//update show currently watching
-		let updateShow = show
-		updateShow.isWatching = !updateShow.isWatching
+		let updateMedia = media
+		updateMedia.isWatching = !updateMedia.isWatching
 
-		fetch("http://localhost:3001/shows/update/" + show._id, {
+		fetch("http://localhost:3001/media/update/" + media._id, {
 			method: 'PUT',
 			headers: {
 		      'Accept': 'application/json',
 		      'Content-Type': 'application/json'
 		    },
-			body: JSON.stringify(updateShow)
+			body: JSON.stringify(updateMedia)
 		});
 
 		return
 	}
 
-	changeRanking(updatedShow, rankChangeType) {
+	changeRanking(updatedMedia, rankChangeType) {
 		//need to iterate through entire list and update all the shows below the newest ordered item
-		fetch("http://localhost:3001/shows/update/" + updatedShow._id, {
+		fetch("http://localhost:3001/media/update/" + updatedMedia._id, {
 			method: 'PUT',
 			headers: {
 		      'Accept': 'application/json',
 		      'Content-Type': 'application/json'
 		    },
-			body: JSON.stringify(updatedShow)
+			body: JSON.stringify(updatedMedia)
 		});
 
-		this.state.showList.forEach((show) => {
-		  if (updatedShow._id !== show._id && updatedShow.rank === show.rank) {
+		this.state.mediaList.forEach((media) => {
+		  if (updatedMedia._id !== media._id && updatedMedia.rank === media.rank) {
 
 		  	//if not the same show and the updated show rank is equal to show.rank
 
 		  	//decrease = original show adds to rank, (+1); other show should decrease (-1) to replace it
 		  	//increase = original show takes away rank (-1); other show should increase (+1) to replace it
 
-		  	let adjustedShow = show
+		  	let adjustedMedia = media
 
-		  	if (rankChangeType === 'decrease') adjustedShow.rank = adjustedShow.rank - 1
-		  	if (rankChangeType === 'increase') adjustedShow.rank = adjustedShow.rank + 1
+		  	if (rankChangeType === 'decrease') adjustedMedia.rank = adjustedMedia.rank - 1
+		  	if (rankChangeType === 'increase') adjustedMedia.rank = adjustedMedia.rank + 1
 
-			fetch("http://localhost:3001/shows/update/" + adjustedShow._id, {
+			fetch("http://localhost:3001/shows/update/" + adjustedMedia._id, {
 				method: 'PUT',
 				headers: {
 			      'Accept': 'application/json',
 			      'Content-Type': 'application/json'
 			    },
-				body: JSON.stringify(adjustedShow)
+				body: JSON.stringify(adjustedMedia)
 			});
 		  }
 		});
 
-		this.getShowList()
+		this.getMediaList()
 	}
 
 	returnToMain() {
 		this.setState((prevState) => ({
 			...prevState,
-			displayEditShowForm: false,
-			displayNewShowForm: false
+			displayEditMediaForm: false,
+			displayNewMediaForm: false
 		}))
 	}
 
@@ -143,7 +143,7 @@ class MainDisplay extends React.Component {
 			loading: true
 		})
 
-		this.getShowList()
+		this.getMediaList()
 	}
 
 	/*componentDidUpdate(prevProps, prevState) {
@@ -157,34 +157,34 @@ class MainDisplay extends React.Component {
 		event.persist()
 		this.setState((prevState) => ({
 			...prevState,
-			filterShows: event.target.value
+			filterMedia: event.target.value
 		}))
 
 		setTimeout(() => { 
-			this.getShowList(); 
+			this.getMediaList(); 
 		}, 100);
 	}
 
 	render() {
 		let buttonDisplay = ''
 
-		buttonDisplay = this.state.displayNewShowForm ? '-' : '+'
+		buttonDisplay = this.state.displayNewMediaForm ? '-' : '+'
 
 		if (this.state.loading) {
 			return 'Loading...'
-		} else if (this.state.displayEditShowForm) {
-			return <EditShowForm 
-						show={this.state.editingShow}
-						onFormSubmit={this.setDisplayEditShowForm}
+		} else if (this.state.displayEditMediaForm) {
+			return <EditMediaForm 
+						media={this.state.editingMedia}
+						onFormSubmit={this.setDisplayEditMediaForm}
 						cancel={this.returnToMain}
 					/> 
-		} else if (this.state.displayNewShowForm ) {
-			return <NewShowForm
-						rank={this.state.showList.length}
-						onFormSubmit={this.setDisplayNewShowForm} 
+		} else if (this.state.displayNewMediaForm ) {
+			return <NewMediaForm
+						rank={this.state.mediaList.length}
+						onFormSubmit={this.setDisplayNewMediaForm} 
 						cancel={this.returnToMain}
 					/>
-		} else if (this.state.showList && !this.state.loading && !this.state.displayNewShowForm && !this.state.displayEditShowForm) {
+		} else if (this.state.mediaList && !this.state.loading && !this.state.displayNewMediaForm && !this.state.displayEditMediaForm) {
 			return (
 				<div>
 					<div style={{display:"flex"}}>
@@ -196,7 +196,7 @@ class MainDisplay extends React.Component {
 						/>
 						<Button 
 							style={{marginLeft:"auto"}}
-							onClick={this.setDisplayNewShowForm}
+							onClick={this.setDisplayNewMediaForm}
 							variant="contained"
 							className="new-show-form-button"
 
@@ -204,11 +204,11 @@ class MainDisplay extends React.Component {
 							{buttonDisplay}
 						</Button>
 					</div>
-					<ShowList 
-						filter={this.state.filterShows} 
-						showList={this.state.showList}
-						editShow={this.setDisplayEditShowForm}
-						deleteShow={this.getShowList}
+					<MediaList 
+						filter={this.state.filterMedia} 
+						mediaList={this.state.mediaList}
+						editMedia={this.setDisplayEditMediaForm}
+						deleteMedia={this.getMediaList}
 						updateCurrentlyWatching={this.updateCurrentlyWatching}
 						changeRanking={this.changeRanking}
 					/>

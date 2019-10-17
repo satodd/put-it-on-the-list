@@ -2,28 +2,28 @@ const mongoose = require('mongoose');
 const express = require('express');
 const routes = express.Router()
 
-let Show = require('../models/Show')
+let Media = require('../models/Media')
 
-// route: /shows/
+// route: /media/
 routes.get('/', (req, res) => {
-    Show.find({title: new RegExp(req.query.search, 'i')},
-        (err, shows) => {
+    Media.find({title: new RegExp(req.query.search, 'i')},
+        (err, media) => {
         if (err) {
             console.log(err);
         } else {
-            res.json(shows);
+            res.json(media);
         }
     });
 });
 
-// route: /shows/new
+// route: /media/new
 routes.post('/new', (req, res) => {
-    let newShow = new Show(req.body);
-    console.log("Creating new show!!");
+    let newMedia = new Media(req.body);
+    console.log("Creating new media!!");
     
-    newShow.save()
-        .then(show => {
-            res.status(200).json({'show': newShow});
+    newMedia.save()
+        .then(media => {
+            res.status(200).json({'media': newMedia});
         })
         .catch(err => {
             res.json(err);
@@ -33,19 +33,19 @@ routes.post('/new', (req, res) => {
 routes.put('/update/:id', (req, res) => {
     console.log("I am updating!");
 
-    let showUpdate = new Show(req.body);
+    let mediaUpdate = new Media(req.body);
 
-    Show.updateOne({_id: req.params.id}, req.body, (err, doc) => {
+    Media.updateOne({_id: req.params.id}, req.body, (err, doc) => {
         if (err) return res.status(500).send({ error: err });
         return res.status(200).send("succesfully saved");
     })
 })
 
 routes.delete('/delete/:id', (req, res) => {
-    console.log("deleting show!")
+    console.log("deleting media!")
     
-    Show.deleteOne({ _id: req.params.id })
-        .then(show => {
+    Media.deleteOne({ _id: req.params.id })
+        .then(media => {
             res.status(200).json({'deleted!': req.params.id});
         })
         .catch(err => {

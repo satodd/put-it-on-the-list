@@ -7,6 +7,7 @@ class NewShowForm extends React.Component {
 	constructor() {
 		super()
 		this.state = {
+			type: '',
 			title: '',
 			season: '',
 			service: '',
@@ -42,7 +43,8 @@ class NewShowForm extends React.Component {
 	}
 
 	onSubmit(event) {
-		let newShow = {
+		let newMedia = {
+			type: this.state.type,
 			title: this.state.title,
 			season: this.state.season,
 			service: this.state.service,
@@ -52,13 +54,13 @@ class NewShowForm extends React.Component {
 			isWatching: false
 		}
 
-		fetch("http://localhost:3001/shows/new", {
+		fetch("http://localhost:3001/media/new", {
 			method: 'POST',
 			headers: {
 		      'Accept': 'application/json',
 		      'Content-Type': 'application/json'
 		    },
-			body: JSON.stringify(newShow),
+			body: JSON.stringify(newMedia),
 		});
 
 		this.props.onFormSubmit()
@@ -75,6 +77,11 @@ class NewShowForm extends React.Component {
 						onChange={this.handleChange}
 					/>
 				</div>
+				<Select name="type" value={this.state.type} onChange={this.handleChange}>
+					<option value="default" disabled> Please Select a Length </option>
+					<option value="movie"> Movie </option>
+					<option value="movie"> Television Show </option>
+				</Select>
 				<div>
 				<TextField 
 					value={this.state.season}
